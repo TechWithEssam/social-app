@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+search
+{% endblock title %}
+
+{% block content %}
+
+{% if posts %}
+<div>
+    posts
+</div>
+<div>
+    <ol>
+        {% for post in posts %}
+            <li>
+                <a href="{{post.get_detail_post_url}}">{{post.text}}</a>
+            </li>
+        {% endfor %}
+        
+    </ol>
+</div>
+{% endif %}
+<hr>
+{% if profile %}
+<div>
+    Profiles Users
+</div>
+<div>
+    <ol>
+        {% for user in profile %}
+            <li>
+                <a href="{{user.get_profile_user}}">{{user.user}}</a>
+            </li>
+        {% endfor %}
+        
+    </ol>
+</div>
+{% endif %}
+
+{% endblock content %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+home
+{% endblock title %}
+
+{% block content %}
+<a href="{{profile.get_my_profile}}"> {{profile.user.username}}</a>
+<div class="mt-2">
+    {% if is_empty %}
+    <div>
+        no posts to display <a href="{% url 'profiles:invatations' %}">add friends</a>
+    </div>
+    {% else %}
+    {% for item in post %}
+        <div>
+            <div>
+                <b>
+                   <img src="{{item.auther.get_avatar_url}}" class="avatar" alt="">
+                    {% if request.user == item.auther.user %}
+                    <a href="{{item.auther.get_my_profile}}">{{item.auther.user.username}}</a>
+                    {% else %}
+                    <a href="{{item.auther.get_profile_user}}">{{item.auther.user.username}}</a>
+                    {% endif %}
+                </b>
+                <span>{{item.created|timesince}} ago</span>
+            </div>
+
+            <div>
+                <small>
+                    {% if request.user == item.auther.user %}
+                    <a href="{{item.get_url_update_post}}" class="change">Update</a>
+                    <a href="{{item.get_url_delete_post}}" class="change">Delete</a>
+                    {% endif %}
+                </small>
+            </div>
+
+            <div class="mt-2">
+                {% if item.image %}
+                
+                    <img src="{{item.image.url}}" class="img-fluid img-thumbnail" alt="...">
+               
+                {% endif %} <br>
+                <div>
+                    {{item.text}}
+                </div>
+                <div>
+                    <form action="{% url 'posts:like_unlike' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_pk" value="{{item.pk}}">
+                        
+                            {% if profile in item.liked.all %}
+                            <button type="submit"><i class="fa fa-thumbs-down"></i></button>
+                            {% else %}
+                            <button type="submit"><i class="fa fa-thumbs-up"></i></button>
+                            {% endif %}
+                        
+                    </form>
+                    <small>{{item.get_all_no_of_like}} likes</small>
+                    <a href="{{item.get_detail_post_url}}">Comment</a> <small>{{item.get_all_comment_num}}Comments</small> 
+                </div>
+            </div>
+        </div>
+        <hr>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock content %}
+
+

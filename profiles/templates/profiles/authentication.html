@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if register_form %}
+register
+{% else %}
+login
+{% endif %}
+{% endblock title %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <div>
+        {% if register_form %}
+        <div>
+            <form action="" method="post">
+                {% csrf_token %}
+                {{register_form.as_p}}
+                <button type="submit">Sign Up</button>
+            </form>
+            <small>
+                <a href="{% url 'profiles:login' %}">Sign in</a>
+            </small>
+        </div>
+        {% else %}
+        <div class="container">
+            <form action="" method="post">
+                {% csrf_token %}
+                    {{auth_form.as_p}}
+                <button type="submit">Sign in</button>
+            </form>
+            <small>
+                <a href="{% url 'profiles:register' %}">Sign up</a>
+            </small>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

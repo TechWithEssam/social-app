@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+{{qs.text}}
+{% endblock title %}
+
+{% block content %}
+<div>
+    <div>
+        <p>
+            <img src="{{qs.auther.get_avatar_url}}" class="avatar_" alt=""><b>{{qs.auther}}</b>  {{qs.created|timesince}} ago
+        </p>
+        <p>
+            {% if qs.image %}
+                <img src="{{qs.image.url}}" class="img-fluid img-thumbnail" alt="">
+            {% endif %}
+        </p>
+        <p>
+            {{qs.text}}
+        </p>
+    </div>
+</div>
+<div>
+    <div>
+        <h3>Comments</h3>
+    </div>
+    {% if is_empty %}
+    <b>
+        no comments here...........
+        <small>تحب تضيف؟</small>
+    </b>
+    {% else %}
+    {% for item in comments %}
+    <div>
+        <div>
+            <div>
+                <small>
+                    {% if request.user == item.user.user %}
+                    <a href="{{item.get_update_comment_url}}">Update</a>
+                    <a href="{{item.get_delete_url_comment}}">Delete</a>
+                    {% endif %}
+                </small>
+            </div>
+            <img src="{{item.user.get_avatar_url}}" class="avatar_" alt="">
+                <a href="{{item.user.get_profile_user}}"><b>{{item.user}}</b></a>
+            <small>{{item.created|timesince}} ago</small>
+        </div>
+        <p>
+            {{item.body}}
+        </p>
+        <div>
+            <form action="{% url 'posts:like_unlike_comment' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="comment_pk" value="{{item.pk}}">
+                <button type="submit">
+                    {% if profile in item.like.all %}
+                    <i>Unlike</i>
+                    {% else %}
+                    <i>Like</i>
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+<div class="form">
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">comment</button>
+    </form>
+</div>
+{% endblock content %}

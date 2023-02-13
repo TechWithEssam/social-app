@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}
+invatations
+{% endblock title %}
+
+{% block content %}
+<h1>You Invates</h1>
+<div>
+    <div>
+        {% if is_empty %}
+    <h3 class="alert alert-danger">
+        no have invatations here......
+    </h3>
+    {% else %}
+        {% for item in qs %}
+            <div>
+               <img src="{{item.get_avatar_url}}" class="avatar_" alt=""> <a href="{{item.get_profile_user}}">{{item.user}}</a> 
+            </div>
+            <div class="container mt-2" >
+                <form action="{% url 'profiles:accept_invite' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="profile_pk" value="{{item.pk}}">
+                    <button>Accept</button>
+                </form>
+                <form action="{% url 'profiles:reject_invite' %}" method="post" class="mt-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="profile_pk" value="{{item.pk}}">
+                    <button> Reject</button>
+                </form>
+            </div>
+            <hr>
+        {% endfor %}
+    {% endif %}
+    </div>
+</div>
+
+<h1>Send Invites</h1>
+<div>
+    <div>
+        {% for item in obj %}
+        <div>
+            <div>
+                <img src="{{item.get_avatar_url}}" class="avatar_" alt=""> <b><a href="{{item.get_profile_user}}">{{item.user}}</a></b>
+                <div>
+                    {% if item.user not in relation_sender and item.user not in relation_receiver %}
+                    <form action="{% url 'profiles:send_invite' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="profile_pk" value="{{item.pk}}">
+                        <button type="submit">Send Invite</button>
+                    </form>
+                    {% elif item.user in relation_receiver and request.user not in item.friends.all %}
+                    <button class="ui disabled button mb-5 w-big"><i class="user icon"></i>Waiting for approval</button>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

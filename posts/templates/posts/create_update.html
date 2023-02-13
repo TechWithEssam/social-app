@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}
+{% if c_form %}
+create new post
+{% elif u_form %}
+update
+{% else %}
+why you want to delete this post?
+{% endif %}
+{% endblock title %}
+
+{% block content %}
+
+<div>
+    {% if c_form %}
+    <div>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{c_form.as_p}}
+            <button type="submit">Post Now </button>
+        </form>
+    </div>
+    {% elif u_form %}
+    <div>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{u_form.as_p}}
+            <button type="submit">Save</button>
+        </form>
+    </div>
+    {% elif update_comment %}
+    <div>
+        <form action="" method="post">
+        {% csrf_token %}
+        {{update_comment.as_p}}
+        <button type="submit">Update</button>
+        </form>
+    </div>
+    {% else %}
+    <div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <p>
+                <b>{{request.user}}</b> why you want to delete this post?
+            </p>
+            <button type="submit">يلزمك في حاجة؟</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

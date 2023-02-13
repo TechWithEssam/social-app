@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}
+{{profile.user}}
+{% endblock title %}
+
+{% block content %}
+<div class="container text-center">
+    <div>
+        <img src="{{profile.get_avatar_url}}" class="avatar" alt=""> <br>
+        <p>
+          <b>
+            {{profile.user.username}}
+          </b>
+        </p>
+        <p>
+            {{profile.bio}} <br>
+            {% if profile.user.first_name %}
+            {{profile.user.first_name}} {{profile.user.last_name}}
+            {% endif %} <br>
+            {% if profile.user.email %}
+            {{profile.user.email }}
+            {% endif %} <br>
+            {% if profile.gender %}
+           Gender {{profile.gender}}
+        {% endif %}
+        <br>
+            {% if profile.country %}
+            {{profile.country}}
+            {% endif %}
+        </p> <br>
+        <div>
+         {{profile.get_num_of_posts}} Posts
+        </div>
+        <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    {{profile.get_num_of_friends}} Friends
+</button>
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">My Friends</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {% for item in profile.get_all_friends%}
+          <b> <img src="{{item.profile.get_avatar_url}}" class="avatar_" alt=""><a href="{{item.profile.get_profile_user}}">{{item.username}}</a>
+          <div>
+            <form action="{% url 'profiles:remove_friend' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="profile_pk" value="{{item.profile.pk}}">
+              <button type="submit">Remove Fro Friends</button>
+          </form>
+          </div>
+          </b> <br>
+          {% endfor %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div> <br>
+  <div>
+    <a href="{{profile.get_url_update_info_profile}}">Update My Profile</a>
+  </div>
+    </div>
+
+</div>
+
+{% for post in profile.post_set.all %}
+  <div class="card" style="width: 18rem;">
+    {% if post.image %}
+    <img src="{{post.image.url}}" class="card-img-top" alt="...">
+    {% endif %}
+    <div class="card-body">
+      <p class="card-text">{{post.text}}</p>
+      <p class="card-text"><b>{{post.auther.user.username}}</b></p>
+      <div>
+        <form action="{% url 'posts:like_unlike' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="post_pk" value="{{post.pk}}">
+            <button type="submit">
+                {% if profile in post.liked.all %}
+                unlike
+                {% else %}
+                like
+                {% endif %}
+            </button>
+        </form>
+        <small>{{post.get_all_no_of_like}} likes</small>
+        <a href="{{post.get_detail_post_url}}">Comment</a> <small>{{post.get_all_comment_num}}Comments</small> 
+    </div>
+    </div>
+  </div>
+{% endfor %}
+{% endblock content %}
